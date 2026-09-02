@@ -96,6 +96,11 @@ section{margin-bottom:var(--sp3)}
 /* N6: Tracker-Zeile am Topf — Zahlen tabellarisch, damit sie mit den Salden
    fluchten; darf auf schmalen Viewports umbrechen statt zu kappen. */
 .potline{font-variant-numeric:tabular-nums;white-space:normal;margin-top:3px;opacity:.9}
+/* N24: Erklaerzeile unter einem Zeilentitel darf umbrechen statt zu kappen —
+   dasselbe Muster wie .potline (N6), nur ohne Zahlen-Optik. Wirkt erst
+   zusammen mit min-width:0 am Flex-Kind: ohne das dehnt der nowrap-Text die
+   Zeile ueber den Viewport, statt zu kappen. */
+.rsub.wrap{white-space:normal;overflow:visible;text-overflow:clip}
 .amt{font-weight:650;font-size:15.5px;flex:none}
 /* N22: rechte Spalte einer Verlauf-Zeile — Betrag oben, «Saldo danach» klein
    darunter. flex:none wie .amt selbst, damit weiterhin die Namensspalte
@@ -485,7 +490,7 @@ svg text.provt{text-decoration:underline dotted}
 const LS_KEY = 'kontoblatt.state';
 const SCHEMA_VERSION = 1;
 /* U1.8: EINZIGE Quelle fürs Versionslabel (Fusszeile Einstellungen) */
-const APP_STAGE = 'Etappe N23';
+const APP_STAGE = 'Etappe N24';
 /* U3: 'today' (Heute zu tun) ersetzt die früheren Blöcke 'quickActions' und
    'todos' — Legacy-Namen werden in der Normalisierung positionserhaltend gemappt.
    U4: 'accounts' (Konten-Block) ist jetzt ein normaler homeLayout-Block
@@ -12243,8 +12248,11 @@ function rWizard(){
 
 /* ─────────── Einstellungen ─────────── */
 function rEinst(){
+  /* N24: das Flex-Kind braucht min-width:0 (wie in openMoreSheet), sonst
+     kann .rl nicht schrumpfen und die nowrap-Erklaerzeile dehnt die Zeile
+     ueber die Viewport-Breite. Die Erklaerzeile selbst bricht um (.wrap). */
   const secRow = (label, sub, fn) => `<button class="row tap" onclick="${fn}">
-    <div class="rl"><div><div class="rname">${label}</div>${sub?`<div class="rsub">${sub}</div>`:''}</div></div>
+    <div class="rl"><div style="min-width:0"><div class="rname">${label}</div>${sub?`<div class="rsub wrap">${sub}</div>`:''}</div></div>
     <div class="mut">›</div></button>`;
   const wizSections = ['Profil & Währung','Banken & Konten','Arbeitsmodell','Fixkosten','Sparmodell','Sparziele','Aktueller Monat & YTD'];
   return `
